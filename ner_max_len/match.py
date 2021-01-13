@@ -1,7 +1,3 @@
-import os
-
-import pandas as pd
-
 from ner_max_len import department_count, disease_count
 
 index = 0
