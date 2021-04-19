@@ -1,5 +1,5 @@
 import json
-
+# 做实体跳表 关系可视化
 question_entity = open("../match_machine/question_entity.json", encoding="utf-8")
 for i in question_entity.readlines():
     question_entity_dict: dict = json.loads(i)

@@ -1,5 +1,5 @@
 import csv
-
+# 创建医疗问题数据
 from ner_max_len import questions, ICD_10
 
 question_list = []
