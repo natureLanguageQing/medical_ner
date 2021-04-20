@@ -1,3 +1,4 @@
+# 数据去重
 question_entity_label = set(open("../match_machine/question_entity_label.json", "r", encoding="utf-8").readlines())
 print(len(open("../match_machine/question_entity_label.json", "r", encoding="utf-8").readlines()))
 print(len(question_entity_label))

@@ -6,7 +6,6 @@ from tqdm import tqdm
 from ner_max_len import ICD_10, department_entity, disease_entity
 
 
-
 def index_of_str(s1, s2, label):
     s2 = s2.rstrip("\n")
     dex = 0
@@ -15,7 +14,7 @@ def index_of_str(s1, s2, label):
     num = len(lt)
     for i in range(num - 1):
         dex += len(lt[i])
-        index.append([dex, len(s2) + dex, label])
+        index.append([dex, len(s2) + dex, s2, label])
         dex += len(s2)
     return index
 
@@ -30,16 +29,11 @@ def list_ner_label(entity_message, entity_label):
             ner_label[i[0]] = entity_label
 
 
-
-
-
 def list_ner_file_label(entity_message, entity_label):
     for i in entity_message:
         i = i.replace("\n", "")
         if len(i.strip()) > 2:
             ner_label[i] = entity_label
-
-
 
 
 def list_ner_csv_label(entity_message, entity_label):
@@ -53,6 +47,10 @@ def list_ner_csv_label(entity_message, entity_label):
 list_ner_csv_label("../entity/region.csv", "region")
 
 
+def takeSecond(elem):
+    return elem[0]
+
+
 def label_append_max(labels, label):
     """
     新增实体进行验证
@@ -60,6 +58,7 @@ def label_append_max(labels, label):
     :param label: 当前实体
     :return:
     """
+    labels.extend(label)
     if isinstance(label, int):
         return
     if len(labels) == 0:
@@ -74,6 +73,8 @@ def label_append_max(labels, label):
                 if labels[in_label][0] < label[0] < labels[in_label][1] and \
                         label[1] - label[0] > labels[in_label][1] - labels[in_label][0]:
                     labels[in_label] = label
+
+    labels.sort(key=takeSecond)
 
 
 def medical_ner(export_path, medical_text):
@@ -114,13 +115,33 @@ def medical_ner(export_path, medical_text):
                         fp.write(entity_dict_label + "\n")
 
 
+def medical_one(medical_message):
+    if isinstance(medical_message, str):
+        medical_message = medical_message.strip()
+        medical_message = medical_message.replace("\n", "")
+        medical_message = medical_message.replace("\r", "")
+        medical_message = medical_message.replace(" ", "")
+    label_index_list = []
+    for i, j in ner_label.items():
+        if i in medical_message:
+            label_index = index_of_str(medical_message, i, j)
+            label_append_max(label_index_list, label_index)
+
+    if len(label_index_list) > 2 and len(medical_message) > 10:
+        entity_dict_label = {"text": medical_message, "labels": label_index_list}
+        entity_dict_label = json.dumps(entity_dict_label, ensure_ascii=False)
+        print(entity_dict_label)
+
+
 if __name__ == '__main__':
     DRUG_entity = open("../entity/drug.txt", encoding="utf-8").readlines()
-
-    medical_questions = pd.read_csv("../medical_question/all_data_set.csv").drop_duplicates().values.tolist()
+    body_entity = open("../entity/body.csv",encoding="utf-8").readlines()
+    # medical_questions = pd.read_csv("../medical_question/all_data_set.csv").drop_duplicates().values.tolist()
     list_ner_file_label(DRUG_entity, "DRUG_entity")
+    list_ner_file_label(body_entity, "body_entity")
     list_ner_label(ICD_10, "ICD_10")
     list_ner_label(disease_entity, "disease_entity")
     list_ner_label(department_entity, "department_entity")
 
-    medical_ner('question_entity_label.json', medical_questions)
+    medical_one(
+        "主动脉夹层的治疗，心胸内科，心胸外科和肿瘤科都可以治疗。使用藿香正气片和藿香正气水效果较好，如果只是保守药物治疗，可以去心内科或者肿瘤科治疗。如果要想做手术治疗，可以去心胸外科或者肿瘤科进行手术治疗。你的主动脉夹层手术治疗以后，血压有了明显的改善，说明治疗还是非常有效的。")

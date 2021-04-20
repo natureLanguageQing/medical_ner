@@ -9,6 +9,13 @@ DRUG_entity = open("../entity/drug.txt", encoding="utf-8").readlines()
 
 
 def index_of_str(s1, s2, label):
+    """
+    判断s2在s1中的开始索引与结束索引
+    :param s1:
+    :param s2:
+    :param label:
+    :return:
+    """
     s2 = s2.rstrip("\n")
     dex = 0
     index = []
@@ -16,7 +23,7 @@ def index_of_str(s1, s2, label):
     num = len(lt)
     for i in range(num - 1):
         dex += len(lt[i])
-        index.append([dex, len(s2) + dex, label])
+        index.append([dex, len(s2) + dex, s2, label])
         dex += len(s2)
     return index
 
@@ -102,4 +109,4 @@ def medical_ner(export_path):
 if __name__ == '__main__':
     medical_questions = pd.read_csv("../medical_question/all_data.csv").drop_duplicates().values.tolist()
 
-    medical_ner('question_entity_label_faster.json')
+    medical_ner('question_entity_2021.json')

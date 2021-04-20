@@ -7,20 +7,20 @@ error = []
 index = 0
 
 
-def start_clean(clean_medical_ner_entity_one, start_word, index=None, text=None):
+def start_clean(clean_medical_ner_entity, start_word, index=None, text=None):
     """
 
     :param text:
-    :param clean_medical_ner_entity_one:
+    :param clean_medical_ner_entity:
     :param start_word:
     :param index:
     :return:
     """
 
-    if clean_medical_ner_entity_one["entity"].startswith(start_word):
-        error.append({"entity": clean_medical_ner_entity_one, "text": text})
-        clean_medical_ner_entity_one["start_offset"] += 1
-        clean_medical_ner_entity_one["entity"] = clean_medical_ner_entity_one["entity"].replace(start_word, "")
+    if clean_medical_ner_entity["entity"].startswith(start_word):
+        error.append({"entity": clean_medical_ner_entity, "text": text})
+        clean_medical_ner_entity["start_offset"] += 1
+        clean_medical_ner_entity["entity"] = clean_medical_ner_entity["entity"].replace(start_word, "")
         index += 1
     return index
 

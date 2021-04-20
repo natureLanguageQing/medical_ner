@@ -1,5 +1,5 @@
 import json
-
+# 清洗json数据 question_entity 数据
 fp = open('../match_machine/question_entity.json', 'r', newline='', encoding='utf-8')
 write = open('../match_machine/question_entity_clean.json', 'w', newline='', encoding='utf-8')
 
