@@ -73,7 +73,6 @@ def label_append_max(labels, label):
                 if labels[in_label][0] < label[0] < labels[in_label][1] and \
                         label[1] - label[0] > labels[in_label][1] - labels[in_label][0]:
                     labels[in_label] = label
-
     labels.sort(key=takeSecond)
 
 
@@ -123,10 +122,12 @@ def medical_one(medical_message):
         medical_message = medical_message.replace(" ", "")
     label_index_list = []
     for i, j in ner_label.items():
-        if i in medical_message:
-            label_index = index_of_str(medical_message, i, j)
-            label_append_max(label_index_list, label_index)
-
+        try:
+            if i in medical_message:
+                label_index = index_of_str(medical_message, i, j)
+                label_append_max(label_index_list, label_index)
+        except:
+            continue
     if len(label_index_list) > 2 and len(medical_message) > 10:
         entity_dict_label = {"text": medical_message, "labels": label_index_list}
         entity_dict_label = json.dumps(entity_dict_label, ensure_ascii=False)
@@ -143,13 +144,9 @@ if __name__ == '__main__':
     list_ner_label(disease_entity, "disease_entity")
     list_ner_label(department_entity, "department_entity")
     all_data_set = pd.read_csv("../medical_question/all_data_set.csv").values.tolist()
-    medical_nest_ner = open("../output/medical_nest_ner_5000.json", "w", encoding="utf8")
+    medical_nest_ner = open("../medical_nest_ner_data/medical_nest_ner_2021年5月24日.json", "w", encoding="utf8")
     index = 0
     for medical_data in all_data_set:
         entity_dict_label = medical_one(medical_data[0])
         if entity_dict_label:
-            if index < 5000:
-                index += 1
-                medical_nest_ner.write(entity_dict_label + "\n")
-            else:
-                break
+            medical_nest_ner.write(entity_dict_label + "\n")
